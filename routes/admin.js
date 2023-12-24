@@ -2,20 +2,20 @@
 const express = require('express');
 const router = express.Router();
 const ClubPost = require('../models/ClubPost');
-const { AdminDetails } = require('../models/ClubAdmin'); // Assuming you have an AdminDetails model
+const { AdminDetails } = require('../models/ClubAdmin');
+
 
 router.get('/getbyId/:postId', async (req, res) => {
   const postId = req.params.postId;
 
   try {
-    // Fetch the club post by ID from the database
+    
     const post = await ClubPost.findById(postId);
 
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    // Send the fetched post as a response
     res.status(200).json(post);
   } catch (error) {
     console.error('Error fetching club post:', error);

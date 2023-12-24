@@ -129,7 +129,7 @@ app.use("/user",auth,userRoute);
 app.use("/user/comment",auth,userRoute);
 app.use("/user/clubpost",auth,userRoute);
 app.use("/user/join",auth,userRoute);
-
+require('dotenv').config()
 
 // super admin
 app.use("/super",superAdmin);

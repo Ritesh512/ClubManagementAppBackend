@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ClubPost = require('../models/ClubPost');
 const { Admin } = require('../models/ClubAdmin'); 
-const { User, UserDetails } = require("../models/ClubUser");
+const {  UserDetails } = require("../models/ClubUser");
 
 
 router.get("/", async (req, res) => {

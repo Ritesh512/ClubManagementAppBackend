@@ -3,6 +3,8 @@ const router = express.Router();
 const { Admin,AdminDetails } = require('../models/ClubAdmin'); 
 const bcrypt = require("bcrypt");
 
+const security_Key = process.env.SECRET_KEY;
+
 router.post("/createAdmin", async (req, res) => {
     try {
       const { name, email, password, clubName,securityKey } = req.body;
@@ -13,7 +15,7 @@ router.post("/createAdmin", async (req, res) => {
           .json({ error: "Name, email, password, and clubName are required" });
       }
   
-      if(securityKey!=="RiteshP"){
+      if(securityKey!==security_Key){
         console.log("Security key");
         return res
           .status(400)

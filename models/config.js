@@ -1,2 +1,5 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const mongoose = require('mongoose');
-mongoose.connect("mongodb://0.0.0.0:27017/Club");
+mongoose.connect(process.env.DATABASE);
