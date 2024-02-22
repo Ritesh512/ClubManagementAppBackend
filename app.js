@@ -3,8 +3,7 @@ const cors = require("cors");
 require("./models/config");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
-
+const path = require("path");
 const { User, UserDetails } = require("./models/ClubUser");
 const { Admin } = require("./models/ClubAdmin");
 const adminRoute = require("./routes/admin");
@@ -12,12 +11,13 @@ const userRoute = require("./routes/user");
 const superAdmin = require("./routes/superAdmin");
 const auth = require("./middleware/auth");
 
-
+const saltRounds = 10;
 const app = express();
+app.use(express.static(path.resolve(__dirname, "dist")));
 app.use(express.json());
 app.use(cors());
 
-const jwtKey = "restKeyRitesh";
+const jwtKey = process.env.TOKEN_KEY;
 
 app.post("/register", async (req, res) => {
   const hash = bcrypt.hashSync(req.body.password, saltRounds);
@@ -100,42 +100,37 @@ app.post("/login", async (req, res) => {
 
     const token = jwt.sign({ user }, jwtKey, { expiresIn: "1h" });
 
-    res
-      .status(200)
-      .json({
-        user: userWithoutPassword,
-        auth: token
-      });
+    res.status(200).json({
+      user: userWithoutPassword,
+      auth: token,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-
 // admin
-app.use('/admin/clubPost',auth, adminRoute);  // for editing get that post
-app.use('/admin/addClubPost',auth, adminRoute);
-app.use("/admin/get",auth, adminRoute);
-app.use("/admin/update",auth ,adminRoute);
-app.use("/admin/delete",auth ,adminRoute);
-
+app.use("/admin/clubPost", auth, adminRoute); // for editing get that post
+app.use("/admin/addClubPost", auth, adminRoute);
+app.use("/admin/get", auth, adminRoute);
+app.use("/admin/update", auth, adminRoute);
+app.use("/admin/delete", auth, adminRoute);
 
 // user
-app.use("/user/clubPosts",auth, userRoute);
-app.use("/user/getUserDetails",auth, userRoute);
-app.use("/user/posts",auth,userRoute);
-app.use("/user",auth,userRoute);
-app.use("/user/comment",auth,userRoute);
-app.use("/user/clubpost",auth,userRoute);
-app.use("/user/join",auth,userRoute);
-require('dotenv').config()
+app.use("/user/clubPosts", auth, userRoute);
+app.use("/user/getUserDetails", auth, userRoute);
+app.use("/user/posts", auth, userRoute);
+app.use("/user", auth, userRoute);
+app.use("/user/comment", auth, userRoute);
+app.use("/user/clubpost", auth, userRoute);
+app.use("/user/join", auth, userRoute);
+require("dotenv").config();
 
 // super admin
-app.use("/super",superAdmin);
+app.use("/super", superAdmin);
 
-
-app.post("/changePassword",auth, async (req, res) => {
+app.post("/changePassword", auth, async (req, res) => {
   try {
     const { userId, password, newPassword, role } = req.body;
 
@@ -181,6 +176,11 @@ app.post("/changePassword",auth, async (req, res) => {
 });
 
 
-app.listen(8000, function (req, res) {
-  console.log("Server listed on port 8000");
+app.get("*", (req, res) =>
+  res.sendFile(path.resolve(__dirname, "dist", "index.html"))
+);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, function (req, res) {
+  console.log("Server listed on port 8080");
 });
